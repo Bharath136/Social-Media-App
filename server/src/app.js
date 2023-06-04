@@ -214,14 +214,9 @@ app.get('/posts/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Retrieve the followers data for the given user ID
     const followersData = await models.Follow.find({ userId });
     req.followersData = followersData;
-
-    // Retrieve the posts from the database and populate the 'userId' field
     const posts = await models.Post.find().populate('userId');
-
-    // Add the 'isFollowed' property to each post based on the followers data
     const updatedPosts = posts.map((post) => {
       const isFollowed = req.followersData.some((follow) => follow.followingId.toString() === post.userId._id.toString());
       return { ...post.toObject(), isFollowed };
@@ -273,12 +268,6 @@ app.get('/following/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve following'});
   }
 });
-
-
-
-
-
-
 
 
 
@@ -482,26 +471,30 @@ app.get('/follow', async (req, res) => {
 
 
 
-const upload = multer({ dest: 'uploads/' });   
-app.post('/stories', upload.single('story'), (req, res) => {
-  const { title, description } = req.body;
-  const imageUrl = req.file.filename;
+// Create a new story
+app.post('/stories', async (req, res) => {
+  try {
+    const { userId, title, description, imageUrl } = req.body;
+    console.log(req.body)
+    const story = new models.Story({ userId, title, description, imageUrl });
+    await story.save();
+    res.status(201).json(story);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create story' });
+  }
+});
 
-  const newStory = new models.Story({
-    title,
-    description,
-    imageUrl
-  });
 
-  newStory.save()
-    .then(() => {
-      console.log('Story saved to the database');
-      res.status(200).json({ message: 'Story uploaded and saved successfully!' });
-    })
-    .catch((error) => {
-      console.error('Error saving the story:', error);
-      res.status(500).json({ error: 'An error occurred while saving the story' });
-    });
+// Get all stories
+app.get('/stories', async (req, res) => {
+  try {
+    const stories = await models.Story.find();
+    res.json(stories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get stories' });
+  }
 });
 
 

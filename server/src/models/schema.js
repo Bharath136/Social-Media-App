@@ -7,9 +7,9 @@ const userSchema = new mongoose.Schema({
   firstname: { type: String },
   lastname: { type: String },
   bio: { type: String },
-  followerId: [{type: String, ref:'User'}],
-  followingId: [{type: String, ref:'User'}],
-  posts: {type:Number,default:0},
+  followerId: [{ type: String, ref: 'User' }],
+  followingId: [{ type: String, ref: 'User' }],
+  posts: { type: Number, default: 0 },
   avatar: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
@@ -20,7 +20,7 @@ const postSchema = new mongoose.Schema({
   content: { type: String, required: true },
   mediaUrl: { type: String }, // Field for storing the URL of the media file
   mediaType: { type: String }, // Field to indicate the type of media (e.g., 'image', 'video')
-  likes: {type:Number, default:0},
+  likes: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -50,8 +50,8 @@ const followSchema = new mongoose.Schema({
 
 
 const shareSchema = new mongoose.Schema({
-  userId: {type: String},
-  postId: {type: String},
+  userId: { type: String },
+  postId: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -74,22 +74,11 @@ const messageSchema = new mongoose.Schema({
 
 
 const storySchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  imageUrl: {
-    type: String,
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  userId: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
 });
 
 
@@ -102,7 +91,7 @@ const models = {
   Follow: mongoose.model('Follow', followSchema),
   Share: mongoose.model('Share', shareSchema),
   Notification: mongoose.model('Notification', notificationSchema),
-  Story: mongoose.model('Story',storySchema),
+  Story: mongoose.model('Story', storySchema),
   Message: mongoose.model('Message', messageSchema)
 };
 

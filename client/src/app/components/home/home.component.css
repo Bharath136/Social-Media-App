@@ -54,3 +54,19 @@
           display: none;
       }
   }
+
+  /* .card{
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+  } */
+
+  .image{
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .image:hover{
+    border-radius: 0;
+  }

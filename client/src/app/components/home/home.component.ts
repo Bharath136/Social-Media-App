@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
   regForm: FormGroup;
+  storyForm: FormGroup
   avatar: any = '';
   name: any = '';
   userId: any = '';
@@ -19,6 +20,7 @@ export class HomeComponent {
   comments: any[] = [];
   likes: any[] = [];
   followersData: any[] = [];
+  stories: any[] = []
 
   constructor(private http: HttpClient, private route: Router) {
     this.regForm = new FormGroup({
@@ -26,6 +28,12 @@ export class HomeComponent {
       mediaUrl: new FormControl(null, Validators.required)
     })
 
+
+    this.storyForm = new FormGroup({
+      title:new FormControl(null, Validators.required),
+      description: new FormControl(null, Validators.required),
+      mediaUrl: new FormControl(null, Validators.required)
+    })
 
 
 
@@ -44,6 +52,11 @@ export class HomeComponent {
 
     this.http.get<any[]>('http://localhost:5100/follow').subscribe((res) => {
       this.followersData = res
+    })
+
+    this.http.get<any[]>('http://localhost:5100/stories').subscribe((res) => {
+      this.stories = res
+      
     })
 
 
@@ -189,22 +202,29 @@ export class HomeComponent {
     );
   }
 
-
-  uploadStory(fileInput: HTMLInputElement): void {
-    const file: File | undefined = fileInput.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      this.http.post('http://localhost:5100/api/stories/upload', formData)
-        .subscribe(() => {
-          // Handle success
-        }, (error) => {
-          console.error('Upload error:', error);
+  uploadStory(details: { title: string, mediaUrl: string, description: string }): void {
+    const story = {
+      userId: this.userId,
+      title: details.title,
+      description: details.description,
+      imageUrl: details.mediaUrl,
+    };
+  
+    this.http.post('http://localhost:5100/stories', story).subscribe(
+      response => {
+        alert('Post Successfully Posted!');
+        console.log('Post successful:', response);
+        this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe(res => {
+          this.posts = res;
         });
-    } else {
-      console.error('No file selected');
-    }
+      },
+      error => {
+        alert('Post Failed!');
+        console.error('Error posting:', error);
+      }
+    );
   }
+  
 
   
   
