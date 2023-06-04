@@ -20,11 +20,6 @@
                 </div>
 
             </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="far fa-bell" style="height: 26px; color: #fff;"></i>
-                </a>
-            </li> -->
             <li class="nav-item w-100 dropdown">
                 <a class="nav-link dropdown-toggle" *ngIf="avatar" id="navbarDropdown" role="button" data-toggle="dropdown"
                     style="color: #fff;" aria-haspopup="true" aria-expanded="false">
@@ -37,9 +32,6 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" routerLink="/login">SignIn/SignUp</a>
                     <a class="dropdown-item" routerLink="/feeds">Feeds</a>
-                    <!-- <a class="dropdown-item" routerLink="/my-orders">MyPosts</a>
-                    <a class="dropdown-item" routerLink="/history">Following</a>
-                    <a class="dropdown-item" routerLink="/history">Followers</a> -->
                     <a class="dropdown-item" routerLink="/friends">Friends</a>
                     <a class="dropdown-item" (click)="onLogout()">Logout</a>
                     <div class="dropdown-divider"></div>
