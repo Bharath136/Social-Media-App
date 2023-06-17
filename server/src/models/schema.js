@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
 const postSchema = new mongoose.Schema({
   userId: { type: String, ref: 'User', required: true },
   content: { type: String, required: true },
+  description: {type: String, required: true},
   mediaUrl: { type: String }, // Field for storing the URL of the media file
   mediaType: { type: String }, // Field to indicate the type of media (e.g., 'image', 'video')
   likes: { type: Number, default: 0 },

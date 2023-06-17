@@ -21,10 +21,17 @@ export class HomeComponent {
   likes: any[] = [];
   followersData: any[] = [];
   stories: any[] = []
+  showComments = false
+
+  post: any = {
+    _id: 1,
+    commentInput: ''
+  };
 
   constructor(private http: HttpClient, private route: Router) {
     this.regForm = new FormGroup({
       content: new FormControl(null, Validators.required),
+      description: new FormControl(null, Validators.required),
       mediaUrl: new FormControl(null, Validators.required)
     })
 
@@ -36,6 +43,7 @@ export class HomeComponent {
     })
 
 
+    
 
     const token = localStorage.getItem("token")
     if (!token) {
@@ -67,7 +75,6 @@ export class HomeComponent {
     this.name = name
     const userId = localStorage.getItem("userId")
     this.userId = userId
-    console.log(userId)
 
     this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
       this.posts = res;
@@ -76,11 +83,17 @@ export class HomeComponent {
 
   }
 
-  onSubmit(details = { mediaUrl: String, content: String }): void {
+  
+  onShowComments(){
+    this.showComments = !this.showComments
+  }
+
+  onSubmit(details = { mediaUrl: String, content: String,description:String }): void {
     const post = {
       userId: this.userId,
       mediaUrl: details.mediaUrl,
       content: details.content,
+      description:details.description,
       mediaType: 'Image',
     }
     this.http.post('http://localhost:5100/posts', post)
@@ -146,7 +159,6 @@ export class HomeComponent {
       followingId: post.userId._id
     }
     this.http.post(`http://localhost:5100/follow`, postDetails).subscribe((res) => {
-      console.log(res)
       alert(`You Followed ${post.userId.username}`)
     })
 
@@ -194,12 +206,22 @@ export class HomeComponent {
       (response) => {
         this.http.get<any[]>('http://localhost:5100/comments').subscribe((res) => {
           this.comments = res
+          this.post.commentInput = '';
+          this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+            this.posts = res;
+          });
+
         })
       },
       (error) => {
         console.error('Failed to post comment:', error);
       }
     );
+  }
+
+  clearCommentInput() {
+    // Clear the comment input field
+    this.post.commentInput = '';
   }
 
   uploadStory(details: { title: string, mediaUrl: string, description: string }): void {
@@ -224,9 +246,4 @@ export class HomeComponent {
       }
     );
   }
-  
-
-  
-  
-
 }

@@ -16,7 +16,7 @@
           padding: 10px;
           background-color: transparent;
           border-radius: 0;
-          color: #fff;
+          color: #000;
       }
   }
   
@@ -55,12 +55,6 @@
       }
   }
 
-  /* .card{
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-  } */
-
   .image{
     width: 160px;
     height: 160px;
@@ -69,4 +63,41 @@
   }
   .image:hover{
     border-radius: 0;
+  }
+
+  .trending-container{
+    width: 580px;
+    background-color: #ffffff;
+    padding: 20px;
+  }
+  @media screen and (max-width:912px) {
+    .trending-container{
+        display: none;
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .date{
+        display: none;
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .image{
+        width: 60px;
+        height: 60px;
+    }
+  }
+
+
+  .story{
+    width: 160px;
+     border-radius: 50%;
+      margin-right: 10px;
+  }
+
+  @media screen and (max-width:768px) {
+    .story{
+        width: 60px;
+    }
   }

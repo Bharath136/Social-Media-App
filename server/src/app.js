@@ -125,8 +125,6 @@ app.put('/user/:id/follow', async (req, res) => {
   }
 });
 
-
-
 app.delete('/user/:id/follow', async (req, res) => {
   try {
     const { id } = req.params;
@@ -156,7 +154,6 @@ app.get('/notifications/:userId', async (req, res) => {
     res.status(500).json({ message: 'Failed to retrieve notifications.' });
   }
 });
-
 // Create a new notification
 app.post('/notifications', async (req, res) => {
   try {
@@ -168,7 +165,6 @@ app.post('/notifications', async (req, res) => {
     res.status(500).json({ message: 'Failed to create notification.' });
   }
 });
-
 
 app.delete('/notifications', async (req, res) => {
   try {
@@ -186,28 +182,20 @@ app.delete('/notifications', async (req, res) => {
 
 app.post('/posts', async (req, res) => {
   try {
-    const { userId, mediaUrl, mediaType, content } = req.body;
+    const { userId, mediaUrl, mediaType,description, content } = req.body;
     console.log(req.body);
-
-    // Create a new post
-    const post = new models.Post({ userId, content, mediaUrl, mediaType });
+    const post = new models.Post({ userId, content,description, mediaUrl, mediaType });
     const savedPost = await post.save();
-
-    // Update user's post count
     await models.Users.findOneAndUpdate(
       { _id: userId },
       { $inc: { posts: 1 } } // Increment postCount field by 1
     );
-
     res.status(201).json(savedPost);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while creating the post.' });
   }
 });
-
-
-
 
 
 app.get('/posts/:userId', async (req, res) => {
@@ -255,8 +243,6 @@ app.get('/posts', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching the posts.' });
   }
 });
-
-
 
 app.get('/following/:id', async (req, res) => {
   try {
@@ -357,8 +343,6 @@ app.delete('/comments/:id', async (req, res) => {
   }
 });
 
-
-// Create a new like
 app.post('/likes', async (req, res) => {
   console.log(req.body)
   try {
@@ -374,7 +358,6 @@ app.post('/likes', async (req, res) => {
     res.status(500).json({ error: 'Failed to create like' });
   }
 });
-
 
 app.get('/likes', async (req, res) => {
   try {
@@ -402,9 +385,6 @@ app.put('/posts/:postId/likes', async (req, res) => {
     res.status(500).json({ error: 'Failed to update likes count' });
   }
 });
-
-
-
 
 app.delete('/dislike/:postId', async (req, res) => {
   try {
@@ -436,8 +416,6 @@ app.post('/follow', async (req, res) => {
     res.status(500).json({ error: 'Failed to create follow' });
   }
 });
-
-
 
 app.delete('/follow', async (req, res) => {
   try {
@@ -496,8 +474,6 @@ app.get('/stories', async (req, res) => {
     res.status(500).json({ error: 'Failed to get stories' });
   }
 });
-
-
 app.get('/followers/:id', async (req, res) => {
   try {
     const userId = req.params.id;
@@ -508,7 +484,6 @@ app.get('/followers/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve followers' });
   }
 });
-
 app.get('/following/:id', async (req, res) => {
   try {
     const userId = req.params.id;
@@ -539,7 +514,6 @@ app.post('/shares', async (req, res) => {
     res.status(500).json({ error: 'Failed to create share' });
   }
 });
-
 
 app.post('/messages', async (req, res) => {
   try {
@@ -581,13 +555,7 @@ app.get('/messages', async (req, res) => {
   }
 });
 
-
-
-
-
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-
-
 module.exports = app;
