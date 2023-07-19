@@ -20,7 +20,7 @@
 .heading {
   font-size: 24px;
   font-weight: bold;
-  color: rgb(93, 93, 253);
+  color: rgb(92, 92, 250);
 }
 
 .nav {
@@ -65,7 +65,7 @@
 }
 
 .head-icon {
-  background-color: rgb(105, 105, 253);
+  background-color: rgb(65, 65, 197);
   color: #fff;
   padding: 2px 10px;
   border-radius: 50%;
@@ -89,7 +89,7 @@
 }
 
 .nav-link.active {
-  background-color: rgb(105, 105, 253);
+  background-color: rgb(87, 87, 226);
   color: #000;
 }
 

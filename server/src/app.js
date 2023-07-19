@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const models = require("./models/schema");
 const multer = require('multer');
+const cron = require('node-cron');
 
 
 app.use(cors());
@@ -201,7 +202,6 @@ app.post('/posts', async (req, res) => {
 app.get('/posts/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-
     const followersData = await models.Follow.find({ userId });
     req.followersData = followersData;
     const posts = await models.Post.find().populate('userId');
@@ -235,8 +235,7 @@ app.get('/post/:userId', async (req, res) => {
 app.get('/posts', async (req, res) => {
   try {
     // Retrieve all posts from the database
-    const posts = await models.Post.find();
-
+    const posts = await models.Post.find().populate('userId');
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);
@@ -344,7 +343,6 @@ app.delete('/comments/:id', async (req, res) => {
 });
 
 app.post('/likes', async (req, res) => {
-  console.log(req.body)
   try {
     const { userId, postId } = req.body;
     const like = new models.Like({
@@ -376,6 +374,7 @@ app.put('/posts/:postId/likes', async (req, res) => {
   try {
     const postId = req.params.postId;
     const post = await models.Post.findById(postId);
+    console.log(post)
     post.likes += 1;
     await post.save();
     
@@ -417,22 +416,31 @@ app.post('/follow', async (req, res) => {
   }
 });
 
-app.delete('/follow', async (req, res) => {
+
+app.delete('/follow/:followingId/:followerId', async (req, res) => {
   try {
-    const { followingId } = req.body;
-    const deletedFollow = await models.Follow.findOneAndDelete({
-      followingId,
+    const followingId = req.params.followingId;
+    const followerId = req.params.followerId;
+    const deletedFollow = await models.Follow.findOneAndDelete({ followingId });
+
+    // Update the user document to remove the followerId from the followerId list
+    const updatedUser = await models.Users.findByIdAndUpdate(followingId, {
+      $pull: { followerId: followerId },
     });
 
-    if (!deletedFollow) {
-      return res.status(404).json({ error: 'Follow not found' });
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    res.status(200).json(deletedFollow);
+    deletedFollow.save()
+
+    res.status(200).json({ message: 'Follower removed successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete follow' });
   }
 });
+
+
 
 
 app.get('/follow', async (req, res) => {
@@ -474,6 +482,7 @@ app.get('/stories', async (req, res) => {
     res.status(500).json({ error: 'Failed to get stories' });
   }
 });
+
 app.get('/followers/:id', async (req, res) => {
   try {
     const userId = req.params.id;
@@ -497,23 +506,6 @@ app.get('/following/:id', async (req, res) => {
 
 
 
-
-
-// Create a new share
-app.post('/shares', async (req, res) => {
-  try {
-    const { userId, postId } = req.body;
-    const share = new models.Share({
-      userId,
-      postId,
-    });
-    const newShare = await share.save();
-
-    res.status(201).json(newShare);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create share' });
-  }
-});
 
 app.post('/messages', async (req, res) => {
   try {
@@ -552,6 +544,23 @@ app.get('/messages', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch messages.' });
+  }
+});
+
+
+// Schedule a task to run every day at midnight (00:00)
+cron.schedule('0 0 * * *', async () => {
+  try {
+    // Calculate the date 24 hours ago
+    const twentyFourHoursAgo = new Date();
+    twentyFourHoursAgo.setDate(twentyFourHoursAgo.getDate() - 1);
+
+    // Find and delete the stories older than 24 hours
+    await models.Story.deleteMany({ createdAt: { $lt: twentyFourHoursAgo } });
+
+    console.log('Old stories deleted successfully.');
+  } catch (error) {
+    console.error('Failed to delete old stories:', error);
   }
 });
 

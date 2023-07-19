@@ -30,6 +30,7 @@ export class SidebarComponent {
 
   constructor(private http:HttpClient) {
     const userId = localStorage.getItem("userId")
+
     this.http.get<any>(`http://localhost:5100/user/${userId}`).subscribe((res)=>{
       this.user = res
     })
@@ -46,10 +47,6 @@ export class SidebarComponent {
       this.posts = res
       console.log(res)
     })
-  }
-
-  toggleSidebar(): void {
-    this.isSidebarHidden = !this.isSidebarHidden;
   }
 }
 

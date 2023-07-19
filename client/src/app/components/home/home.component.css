@@ -1,13 +1,14 @@
 .feeds-container{
     display: flex;
     height: 90vh;
+    box-shadow: 1px 1px 30px #989898;
   }
   
   
   .content-container{
       width:100%;
       overflow: auto;
-      background-color:#c1cbdc;
+      background-color:#ffffff;
       padding: 20px;
   }
   @media screen and (max-width:768px) {
@@ -100,4 +101,28 @@
     .story{
         width: 60px;
     }
+  }
+
+
+  .posts-container{
+    display: flex;
+    align-items: center;
+  }
+  @media screen and (max-width:768px) {
+    .posts-container{
+      flex-direction: column;
+    }
+  }
+
+  .form-card{
+    width: 50%;
+  }
+  @media screen and (max-width:768px) {
+    .form-card{
+      width: 100%;
+    }
+  }
+
+  .card{
+    box-shadow: 1px 1px 20px #9c9c9c;
   }

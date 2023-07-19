@@ -50,11 +50,11 @@ const followSchema = new mongoose.Schema({
 });
 
 
-const shareSchema = new mongoose.Schema({
-  userId: { type: String },
-  postId: { type: String },
-  createdAt: { type: Date, default: Date.now },
-});
+// const shareSchema = new mongoose.Schema({
+//   userId: { type: String },
+//   postId: { type: String },
+//   createdAt: { type: Date, default: Date.now },
+// });
 
 
 const notificationSchema = new mongoose.Schema({
@@ -90,7 +90,6 @@ const models = {
   Comment: mongoose.model('Comment', commentSchema),
   Like: mongoose.model('Like', likeSchema),
   Follow: mongoose.model('Follow', followSchema),
-  Share: mongoose.model('Share', shareSchema),
   Notification: mongoose.model('Notification', notificationSchema),
   Story: mongoose.model('Story', storySchema),
   Message: mongoose.model('Message', messageSchema)

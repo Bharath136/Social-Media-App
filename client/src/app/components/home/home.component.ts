@@ -76,8 +76,13 @@ export class HomeComponent {
     const userId = localStorage.getItem("userId")
     this.userId = userId
 
-    this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+    // this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+    //   this.posts = res;
+    // });
+
+    this.http.get<any[]>(`http://localhost:5100/posts/`).subscribe((res) => {
       this.posts = res;
+      console.log(res)
     });
 
 
@@ -101,7 +106,7 @@ export class HomeComponent {
         response => {
           alert("Post Successfully Posted!")
           console.log('Post successful:', response);
-          this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+          this.http.get<any[]>(`http://localhost:5100/posts/`).subscribe((res) => {
             this.posts = res;
           });
         },
@@ -135,13 +140,10 @@ export class HomeComponent {
 
 
   likePost(postId: string): void {
-    // postId.isLiked = !postId.isLiked;
-
     this.http.put(`http://localhost:5100/posts/${postId}/likes`, {})
       .subscribe(
         (res: any) => {
-          alert("Liked");
-          this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+          this.http.get<any[]>(`http://localhost:5100/posts`).subscribe((res) => {
             this.posts = res;
           });
         },
@@ -162,7 +164,7 @@ export class HomeComponent {
       alert(`You Followed ${post.userId.username}`)
     })
 
-    this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+    this.http.get<any[]>(`http://localhost:5100/posts`).subscribe((res) => {
             this.posts = res;
           });
 
@@ -172,27 +174,25 @@ export class HomeComponent {
   }
 
   unfollowUser(post: any): void {
-    const data = {
-      followingId: post.userId._id
-    };
-
-    this.http.delete<any>('http://localhost:5100/follow', { body: data })
-      .subscribe(
-        response => {
-          alert(`You unfollowed ${post.userId.username}`);
-          this.refreshFollowersData();
-          this.http.put(`http://localhost:5100/user/${this.userId}/follow`, this.userId).subscribe((res) => {
-          })
-
-          this.http.get<any[]>(`http://localhost:5100/posts/${this.userId}`).subscribe((res) => {
+    const followingId = post.userId._id;
+    const followerId = localStorage.getItem('userId')
+    this.http.delete(`http://localhost:5100/follow/${followingId}/${followerId}`).subscribe(
+      response => {
+        console.log(response);
+        alert(`You unfollowed ${post.userId.username}`);
+        this.refreshFollowersData();
+          // Retrieve the updated posts after unfollowing
+          this.http.get<any[]>(`http://localhost:5100/posts`).subscribe((res) => {
             this.posts = res;
           });
-        },
-        error => {
-          console.error(error);
-        }
-      );
+      },
+      error => {
+        console.error(error);
+      }
+    );
   }
+  
+  
 
   refreshFollowersData(): void {
     this.http.get<any[]>('http://localhost:5100/follow').subscribe((res) => {
